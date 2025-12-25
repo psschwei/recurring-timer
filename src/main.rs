@@ -19,9 +19,9 @@ enum TimerState {
 
 struct RecurringTimer {
     interval_input: String,
-    duration_input: String,
+    rounds_input: String,
     interval_secs: u32,
-    duration_mins: u32,
+    num_rounds: u32,
     timer_state: TimerState,
     elapsed_secs: u32,
     total_duration_secs: u32,
@@ -32,7 +32,7 @@ struct RecurringTimer {
 #[derive(Debug, Clone)]
 enum Message {
     IntervalChanged(String),
-    DurationChanged(String),
+    RoundsChanged(String),
     Start,
     Pause,
     Resume,
@@ -45,12 +45,12 @@ impl RecurringTimer {
         (
             Self {
                 interval_input: String::from("60"),
-                duration_input: String::from("20"),
+                rounds_input: String::from("20"),
                 interval_secs: 60,
-                duration_mins: 20,
+                num_rounds: 20,
                 timer_state: TimerState::Stopped,
                 elapsed_secs: 0,
-                total_duration_secs: 20 * 60,
+                total_duration_secs: 60 * 20,
                 chime_count: 0,
                 audio_player: audio::AudioPlayer::new(),
             },
@@ -65,15 +65,16 @@ impl RecurringTimer {
                 if let Ok(secs) = value.parse::<u32>() {
                     if secs > 0 {
                         self.interval_secs = secs;
+                        self.total_duration_secs = self.interval_secs * self.num_rounds;
                     }
                 }
             }
-            Message::DurationChanged(value) => {
-                self.duration_input = value.clone();
-                if let Ok(mins) = value.parse::<u32>() {
-                    if mins > 0 {
-                        self.duration_mins = mins;
-                        self.total_duration_secs = mins * 60;
+            Message::RoundsChanged(value) => {
+                self.rounds_input = value.clone();
+                if let Ok(rounds) = value.parse::<u32>() {
+                    if rounds > 0 {
+                        self.num_rounds = rounds;
+                        self.total_duration_secs = self.interval_secs * self.num_rounds;
                     }
                 }
             }
@@ -81,7 +82,7 @@ impl RecurringTimer {
                 self.timer_state = TimerState::Running;
                 self.elapsed_secs = 0;
                 self.chime_count = 0;
-                self.total_duration_secs = self.duration_mins * 60;
+                self.total_duration_secs = self.interval_secs * self.num_rounds;
             }
             Message::Pause => {
                 self.timer_state = TimerState::Paused;
@@ -121,14 +122,14 @@ impl RecurringTimer {
             .on_input(Message::IntervalChanged)
             .padding(10);
 
-        let duration_input = text_input("Duration (minutes)", &self.duration_input)
-            .on_input(Message::DurationChanged)
+        let rounds_input = text_input("Number of Rounds", &self.rounds_input)
+            .on_input(Message::RoundsChanged)
             .padding(10);
 
         let inputs = if is_configurable {
             row![
                 column![text("Interval (seconds)"), interval_input].spacing(5),
-                column![text("Duration (minutes)"), duration_input].spacing(5),
+                column![text("Number of Rounds"), rounds_input].spacing(5),
             ]
             .spacing(20)
         } else {
@@ -139,8 +140,8 @@ impl RecurringTimer {
                 ]
                 .spacing(5),
                 column![
-                    text("Duration (minutes)"),
-                    text(&self.duration_input).size(16)
+                    text("Number of Rounds"),
+                    text(&self.rounds_input).size(16)
                 ]
                 .spacing(5),
             ]
