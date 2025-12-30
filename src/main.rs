@@ -25,7 +25,7 @@ struct RecurringTimer {
     timer_state: TimerState,
     elapsed_secs: u32,
     total_duration_secs: u32,
-    chime_count: u32,
+    round_number: u32,
     audio_player: audio::AudioPlayer,
 }
 
@@ -51,7 +51,7 @@ impl RecurringTimer {
                 timer_state: TimerState::Stopped,
                 elapsed_secs: 0,
                 total_duration_secs: 60 * 20,
-                chime_count: 0,
+                round_number: 1,
                 audio_player: audio::AudioPlayer::new(),
             },
             Task::none(),
@@ -81,7 +81,7 @@ impl RecurringTimer {
             Message::Start => {
                 self.timer_state = TimerState::Running;
                 self.elapsed_secs = 0;
-                self.chime_count = 0;
+                self.round_number = 1;
                 self.total_duration_secs = self.interval_secs * self.num_rounds;
             }
             Message::Pause => {
@@ -93,7 +93,7 @@ impl RecurringTimer {
             Message::Stop => {
                 self.timer_state = TimerState::Stopped;
                 self.elapsed_secs = 0;
-                self.chime_count = 0;
+                self.round_number = 1;
             }
             Message::Tick => {
                 if self.timer_state == TimerState::Running {
@@ -101,8 +101,11 @@ impl RecurringTimer {
 
                     // Check if it's time to play a chime
                     if self.elapsed_secs % self.interval_secs == 0 {
-                        self.chime_count += 1;
                         self.audio_player.play_chime();
+                        // Only increment round number if we're not at the final chime
+                        if self.elapsed_secs < self.total_duration_secs {
+                            self.round_number += 1;
+                        }
                     }
 
                     // Check if we've reached the total duration
@@ -176,7 +179,26 @@ impl RecurringTimer {
         ))
         .size(24);
 
-        let chime_display = text(format!("Chimes: {}", self.chime_count)).size(20);
+        let round_remaining_secs = if self.interval_secs > 0 {
+            let time_in_round = self.elapsed_secs % self.interval_secs;
+            if time_in_round == 0 {
+                self.interval_secs
+            } else {
+                self.interval_secs - time_in_round
+            }
+        } else {
+            0
+        };
+        let round_remaining_mins = round_remaining_secs / 60;
+        let round_remaining_secs_part = round_remaining_secs % 60;
+
+        let round_time_display = text(format!(
+            "Round Time Remaining: {:02}:{:02}",
+            round_remaining_mins, round_remaining_secs_part
+        ))
+        .size(20);
+
+        let round_display = text(format!("Round: {}", self.round_number)).size(20);
 
         let progress = if self.total_duration_secs > 0 {
             self.elapsed_secs as f32 / self.total_duration_secs as f32
@@ -199,8 +221,9 @@ impl RecurringTimer {
             control_buttons,
             status_display,
             time_display,
+            round_time_display,
             progress_bar,
-            chime_display,
+            round_display,
         ]
         .spacing(20)
         .padding(20)
