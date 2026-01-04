@@ -119,7 +119,7 @@ impl RecurringTimer {
         Task::none()
     }
 
-    fn view(&self) -> Element<Message> {
+    fn view(&self) -> Element<'_, Message> {
         let is_configurable = self.timer_state == TimerState::Stopped;
 
         let interval_input = text_input("Interval (seconds)", &self.interval_input)
