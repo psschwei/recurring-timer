@@ -28,7 +28,7 @@ jobs:
         run: cargo test --verbose
 
       - name: Run clippy
-        run: cargo clippy -- -D warnings -A clippy::manual_is_multiple_of
+        run: cargo clippy -- -D warnings -A unknown-lints -A clippy::manual_is_multiple_of
 
   build:
     name: Build
