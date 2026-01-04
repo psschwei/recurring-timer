@@ -71,3 +71,69 @@ pub fn circular_progress(progress: f32, color: Color) -> Element<'static, ()> {
         .height(Length::Fixed(150.0))
         .into()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_clamps_progress_to_zero() {
+        let progress = CircularProgress::new(-0.5, Color::from_rgb(1.0, 0.0, 0.0));
+        assert_eq!(progress.progress, 0.0);
+    }
+
+    #[test]
+    fn test_new_clamps_progress_to_one() {
+        let progress = CircularProgress::new(1.5, Color::from_rgb(1.0, 0.0, 0.0));
+        assert_eq!(progress.progress, 1.0);
+    }
+
+    #[test]
+    fn test_new_accepts_valid_progress() {
+        let progress = CircularProgress::new(0.5, Color::from_rgb(1.0, 0.0, 0.0));
+        assert_eq!(progress.progress, 0.5);
+    }
+
+    #[test]
+    fn test_new_accepts_zero() {
+        let progress = CircularProgress::new(0.0, Color::from_rgb(1.0, 0.0, 0.0));
+        assert_eq!(progress.progress, 0.0);
+    }
+
+    #[test]
+    fn test_new_accepts_one() {
+        let progress = CircularProgress::new(1.0, Color::from_rgb(1.0, 0.0, 0.0));
+        assert_eq!(progress.progress, 1.0);
+    }
+
+    #[test]
+    fn test_new_stores_color() {
+        let color = Color::from_rgb(0.5, 0.3, 0.7);
+        let progress = CircularProgress::new(0.5, color);
+        assert_eq!(progress.color, color);
+    }
+
+    #[test]
+    fn test_angle_calculation_at_zero_progress() {
+        let progress = CircularProgress::new(0.0, Color::from_rgb(1.0, 0.0, 0.0));
+        let start_angle = -PI / 2.0;
+        let end_angle = start_angle + (2.0 * PI * progress.progress);
+        assert_eq!(end_angle, start_angle);
+    }
+
+    #[test]
+    fn test_angle_calculation_at_half_progress() {
+        let progress = CircularProgress::new(0.5, Color::from_rgb(1.0, 0.0, 0.0));
+        let start_angle = -PI / 2.0;
+        let end_angle = start_angle + (2.0 * PI * progress.progress);
+        assert_eq!(end_angle, start_angle + PI);
+    }
+
+    #[test]
+    fn test_angle_calculation_at_full_progress() {
+        let progress = CircularProgress::new(1.0, Color::from_rgb(1.0, 0.0, 0.0));
+        let start_angle = -PI / 2.0;
+        let end_angle = start_angle + (2.0 * PI * progress.progress);
+        assert_eq!(end_angle, start_angle + 2.0 * PI);
+    }
+}
