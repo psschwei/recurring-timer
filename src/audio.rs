@@ -10,15 +10,27 @@ pub struct AudioPlayer {
 
 impl AudioPlayer {
     pub fn new() -> Self {
-        // Try to create audio output, but don't panic if it fails (e.g., in CI environments)
-        let (stream, stream_handle) = match OutputStream::try_default() {
-            Ok((s, h)) => (Some(s), Some(h)),
-            Err(_) => (None, None),
-        };
+        // In test mode, skip audio initialization to avoid platform-specific issues (especially Windows CI)
+        #[cfg(test)]
+        {
+            return Self {
+                _stream: None,
+                stream_handle: None,
+            };
+        }
 
-        Self {
-            _stream: stream,
-            stream_handle,
+        // In production, try to create audio output, but don't panic if it fails (e.g., in CI environments)
+        #[cfg(not(test))]
+        {
+            let (stream, stream_handle) = match OutputStream::try_default() {
+                Ok((s, h)) => (Some(s), Some(h)),
+                Err(_) => (None, None),
+            };
+
+            Self {
+                _stream: stream,
+                stream_handle,
+            }
         }
     }
 
