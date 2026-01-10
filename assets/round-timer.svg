@@ -1,0 +1,26 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle (clock face) -->
+  <circle cx="64" cy="64" r="56" fill="#4a90e2" stroke="#2c5aa0" stroke-width="4"/>
+
+  <!-- Inner circle (lighter) -->
+  <circle cx="64" cy="64" r="52" fill="#5ba3f5"/>
+
+  <!-- Clock ticks -->
+  <line x1="64" y1="16" x2="64" y2="24" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="64" y1="104" x2="64" y2="112" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="16" y1="64" x2="24" y2="64" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  <line x1="104" y1="64" x2="112" y2="64" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Hour hand -->
+  <line x1="64" y1="64" x2="64" y2="40" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Minute hand -->
+  <line x1="64" y1="64" x2="82" y2="64" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Center dot -->
+  <circle cx="64" cy="64" r="5" fill="#ffffff"/>
+
+  <!-- Bell/chime indicator (small bell in top right) -->
+  <path d="M 88 28 Q 88 24 92 24 Q 96 24 96 28 L 96 32 Q 96 38 92 40 Q 88 38 88 32 Z" fill="#ffd700" stroke="#ffb000" stroke-width="1"/>
+  <circle cx="92" cy="42" r="1.5" fill="#ffb000"/>
+</svg>

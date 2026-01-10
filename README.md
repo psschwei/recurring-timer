@@ -11,6 +11,50 @@ A minimal desktop application for Linux that plays a chime at regular intervals 
 - Chime counter to track how many times the chime has played
 - Clean, minimal user interface
 
+## Installation
+
+### Linux Desktop Installation
+
+#### Option 1: Download from GitHub Releases (Recommended)
+
+Download the latest release for your architecture from the [Releases page](https://github.com/yourusername/round-timer/releases):
+
+```bash
+# Download and extract (replace URL with latest release)
+wget https://github.com/yourusername/round-timer/releases/download/v0.1.0/round-timer-linux-x86_64.tar.gz
+tar -xzf round-timer-linux-x86_64.tar.gz
+cd round-timer
+
+# Run the installer
+./install.sh
+```
+
+#### Option 2: Build from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/round-timer.git
+cd round-timer
+
+# Run the installer
+./install.sh
+```
+
+Both methods will:
+- Build/install the release binary to `~/.local/bin/round-timer`
+- Add a desktop entry so it appears in your Applications menu
+- Install the application icon
+
+After installation, you can launch Round Timer from your Applications menu or run `round-timer` from the terminal.
+
+### Uninstall
+
+To remove Round Timer from your system:
+
+```bash
+./uninstall.sh
+```
+
 ## Building
 
 ```bash
