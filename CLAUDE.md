@@ -96,6 +96,36 @@ sudo apt-get update
 sudo apt-get install -y libasound2-dev pkg-config
 ```
 
+### Installation Scripts
+
+**install.sh** - Installs Round Timer for desktop use:
+- Detects prebuilt binary (from release) or builds from source
+- Installs binary to `~/.local/bin/round-timer`
+- Installs desktop entry to `~/.local/share/applications/round-timer.desktop`
+- Installs icon to `~/.local/share/icons/hicolor/scalable/apps/round-timer.svg`
+- Updates desktop database for application menu integration
+- No sudo required (installs to user directories)
+
+**uninstall.sh** - Removes Round Timer from the system:
+- Removes binary, desktop entry, and icon
+- Updates desktop database
+
+**round-timer.desktop** - Desktop entry file for application menu integration:
+- Defines application name, icon, and executable
+- Categorized under Utilities
+- Works with KDE, GNOME, and other desktop environments
+
+**assets/round-timer.svg** - Application icon:
+- SVG format for scalability
+- Blue circular clock design with bell indicator
+- 128x128 viewBox
+
+**README-INSTALL.txt** - Installation instructions for GitHub release downloads:
+- Included in Linux release tarballs
+- Provides quick start instructions for end users
+- Documents what gets installed and where
+- No technical/developer information (targeted at end users)
+
 ## Architecture
 
 ### Application State Management (Elm Architecture)
@@ -196,7 +226,9 @@ Tests use a helper function `create_test_timer()` to instantiate `RecurringTimer
 **Release Workflow** (runs on version tags `v*`):
 - Builds for multiple platforms (Linux x64/ARM64, macOS x64/ARM64, Windows x64)
 - Runs tests before building
-- Creates GitHub release with binaries
+- Linux builds are bundled as .tar.gz with installer scripts, desktop file, and icon
+- macOS and Windows builds are standalone binaries
+- Creates GitHub release with all artifacts
 
 ## Common Patterns
 

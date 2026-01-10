@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Round Timer
+Comment=A minimal interval timer that plays chimes at regular intervals
+Exec=round-timer
+Icon=round-timer
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=timer;interval;chime;meditation;workout;
+StartupNotify=true

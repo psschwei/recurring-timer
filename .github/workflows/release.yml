@@ -59,7 +59,8 @@ jobs:
       - name: Create release directory
         run: mkdir release
 
-      - name: Copy binary to release directory
+      - name: Copy binary to release directory (Windows/macOS)
+        if: runner.os != 'Linux'
         shell: bash
         run: |
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
@@ -68,11 +69,44 @@ jobs:
             cp target/${{ matrix.target }}/release/round-timer release/${{ matrix.artifact_name }}
           fi
 
-      - name: Upload artifact
+      - name: Create Linux bundle
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          # Create bundle directory
+          mkdir -p release/round-timer
+
+          # Copy binary
+          cp target/${{ matrix.target }}/release/round-timer release/round-timer/
+
+          # Copy installer files
+          cp install.sh release/round-timer/
+          cp uninstall.sh release/round-timer/
+          cp round-timer.desktop release/round-timer/
+          cp README-INSTALL.txt release/round-timer/
+
+          # Copy icon
+          mkdir -p release/round-timer/assets
+          cp assets/round-timer.svg release/round-timer/assets/
+
+          # Create tarball
+          cd release
+          tar -czf ${{ matrix.artifact_name }}.tar.gz round-timer/
+          cd ..
+
+      - name: Upload artifact (Windows/macOS)
+        if: runner.os != 'Linux'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
           path: release/${{ matrix.artifact_name }}
+
+      - name: Upload artifact (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: release/${{ matrix.artifact_name }}.tar.gz
 
   release:
     name: Create Release
